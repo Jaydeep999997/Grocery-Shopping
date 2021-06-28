@@ -1,0 +1,421 @@
+:root {
+  --borderRadius: 0.5rem;
+  --in: white;
+  --h1FontSize: 3rem;
+  --h2FontSize: 2rem;
+  --formFontSize: 1.1rem;
+  --itemFontSize: 1rem;
+  --focusRing: 0.15rem;
+}
+
+* {
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+  font-weight: bold;
+  transition: all 0.1s ease;
+  border-radius: var(--borderRadius);
+}
+
+:focus {
+  outline: none;
+}
+
+html {
+  height: 100%;
+  background: #9b89f55d;
+}
+
+body {
+  height: 100%;
+}
+
+header {
+  height: 10%;
+}
+
+header h1 {
+  text-align: center;
+  font-size: var(--h1FontSize);
+  margin-bottom: 2%;
+}
+
+main {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: 87%;
+}
+
+.inputForm {
+  width: 40%;
+}
+
+form {
+  background: #ffffff87;
+  box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
+  width: 85%;
+  min-height: 320px;
+  height: 35%;
+  margin: auto;
+  margin-top: 1.5rem;
+  list-style-type: none;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+form * {
+  font-size: var(--formFontSize);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+form.highlight {
+  box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
+  transform: scale(1.02);
+}
+
+input:focus {
+  outline: none;
+  border: var(--focusRing) solid black;
+}
+
+#nameList {
+  height: 50%;
+  width: 100%;
+}
+
+#quantityList {
+  height: 50%;
+  width: 50%;
+}
+
+#submitList {
+  height: 50%;
+  width: 50%;
+}
+
+/* Autofill changes background, so give it very long time to change */
+:-webkit-autofill,
+:-webkit-autofill:hover,
+:-webkit-autofill:focus {
+  transition: background-color 500000000s ease-in-out 0s;
+}
+
+input,
+label,
+span {
+  display: block;
+  width: 75%;
+}
+
+input {
+  border: 0.1rem solid var(--in);
+  background-color: var(--in);
+}
+
+.inputForm input {
+  margin: 2% auto;
+  height: 20%;
+  padding: 1rem;
+}
+
+input[type="number"]::-webkit-inner-spin-button {
+  cursor: pointer;
+}
+
+.inputForm button {
+  border: none;
+  color: white;
+  padding: 3% 9%;
+}
+
+.inputForm button {
+  background-color: #1364fa;
+}
+
+.inputForm button:hover {
+  background-color: #034edb;
+}
+
+.inputForm button:active {
+  background-color: #033ba3;
+}
+
+.inputForm button:focus {
+  background-color: #1364fa;
+}
+
+button:focus {
+  border: var(--focusRing) solid black;
+}
+
+.groceryList {
+  height: fit-content;
+  max-height: 90%;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+}
+
+.groceryList * {
+  font-size: var(--itemFontSize);
+}
+
+.groceryList ul {
+  position: relative;
+  list-style-type: none;
+  overflow: auto;
+  height: 95%;
+  width: 100%;
+  margin-bottom: 2%;
+}
+
+.groceryList ul li {
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+    rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+  background-color: #ffffff87;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 3% 5%;
+  width: 90%;
+}
+
+.groceryList .name {
+  width: 55%;
+  padding: 0.4rem;
+  text-align: center;
+  word-wrap: break-word;
+}
+
+.groceryList .quan {
+  padding: 0.4rem;
+  position: sticky;
+  top: 0px;
+  width: 15%;
+  text-align: center;
+  word-wrap: break-word;
+}
+
+.groceryList .edit,
+.groceryList .delete {
+  border: none;
+  color: white;
+  position: sticky;
+  top: 0px;
+  margin: 0.4rem auto;
+  width: 6rem;
+  height: 2.7rem;
+  margin-right: 1%;
+}
+
+.edit {
+  background-color: rgb(2, 126, 2);
+}
+
+.edit:hover {
+  background-color: rgb(2, 104, 2);
+}
+
+.edit:active {
+  background-color: rgb(1, 83, 1);
+}
+
+.edit:focus {
+  background-color: rgb(2, 126, 2);
+  border: var(--focusRing) solid black;
+}
+
+.delete {
+  background-color: #d83933;
+}
+
+.delete:hover {
+  background-color: #b50909;
+}
+
+.delete:active {
+  background-color: #8b0a03;
+}
+
+.delete:focus {
+  background-color: #d83933;
+  border: var(--focusRing) solid black;
+}
+
+.groceryList h2,
+.inputForm h2 {
+  text-align: center;
+  margin: 0;
+  height: auto;
+  width: 100%;
+  font-size: var(--h2FontSize);
+}
+
+.emptyPlace {
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+    rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+  background-color: #ffffff87;
+  position: sticky;
+  top: 0px;
+  text-align: center;
+  font-size: var(--formFontSize);
+  padding: 1.5%;
+  margin-top: 1.5rem;
+}
+
+footer {
+  position: absolute;
+  bottom: 0px;
+  background-color: #8971fd93;
+  width: 100%;
+  text-align: center;
+  font-size: var(--formFontSize);
+}
+
+/* Media queries 
+
+1600px: name quantity 
+        edit delete 
+
+1400px: create three rows for main form 
+
+1000px: make main layout row-wise
+
+550px: edit below submit 
+
+350px: whole structure should be column wise 
+
+*/
+
+@media (max-width: 1600px) {
+  :root {
+    --h1FontSize: 2.8rem;
+    --h2FontSize: 1.9rem;
+    --formFontSize: 1.15rem;
+    --itemFontSize: 0.95rem;
+  }
+  .groceryList .name {
+    width: 80%;
+  }
+
+  .groceryList .quan {
+    position: static;
+    width: 20%;
+  }
+
+  .groceryList .edit {
+    position: static;
+    margin: 0.4rem auto;
+  }
+
+  .groceryList .delete {
+    position: static;
+    margin: 0.4rem auto;
+  }
+}
+
+@media (max-width: 1400px) {
+  :root {
+    --h1FontSize: 2.6rem;
+    --h2FontSize: 1.8rem;
+    --formFontSize: 1.1rem;
+    --itemFontSize: 0.9rem;
+  }
+  #nameList,
+  #quantityList,
+  #submitList {
+    height: 33%;
+    width: 100%;
+  }
+  .inputForm input {
+    height: 23%;
+  }
+  .inputForm button {
+    padding: 2% 9%;
+  }
+}
+
+@media (max-width: 1000px) {
+  :root {
+    --h1FontSize: 2.4rem;
+    --h2FontSize: 1.7rem;
+    --formFontSize: 1.05rem;
+    --itemFontSize: 0.85rem;
+  }
+  html,
+  body {
+    height: auto;
+  }
+  main {
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    margin-top: 10%;
+  }
+  .inputForm {
+    width: 100%;
+  }
+  form {
+    height: 25rem;
+  }
+  .inputForm button {
+    padding: 1% 6%;
+  }
+  .groceryList {
+    margin-top: 10%;
+    margin-bottom: 15%;
+    width: 96%;
+    max-height: 50rem;
+  }
+}
+
+@media (max-width: 550px) {
+  :root {
+    --h1FontSize: 2.2rem;
+    --h2FontSize: 1.6rem;
+    --formFontSize: 1rem;
+    --itemFontSize: 0.8rem;
+  }
+  .groceryList .edit,
+  .groceryList .delete {
+    width: 100%;
+    margin: 2% 30%;
+  }
+  .inputForm button {
+    padding: 1.5% 6%;
+  }
+}
+
+@media (max-width: 350px) {
+  :root {
+    --h1FontSize: 2rem;
+    --h2FontSize: 1.5rem;
+    --formFontSize: 0.95rem;
+    --itemFontSize: 0.75rem;
+  }
+  .groceryList {
+    margin-top: 30%;
+  }
+  .groceryList .name,
+  .groceryList .quan {
+    width: 100%;
+  }
+  .groceryList .edit,
+  .groceryList .delete {
+    margin: 3% 30%;
+  }
+  form {
+    width: 90%;
+  }
+  .inputForm button {
+    padding: 2% 8%;
+  }
+}

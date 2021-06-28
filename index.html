@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="script.js" defer></script>
+    <link rel="shortcut icon" href="./images/grocery_favicon.ico" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap" rel="stylesheet">
+    <title>Grocery Shopping</title>
+</head>
+
+<body>
+    <header>
+        <h1>Grocery Cart</h1>
+    </header>
+
+    <main>
+        <div class="inputForm">
+            <h2>Add Grocery Item</h2>
+            <form
+                aria-label="Fill the form below to add or update grocery items. All fields marked with an asterisk are mandatory">
+                <div id="nameList">
+                    <label for="itemName">Item Name * </label>
+                    <input title="Add Item Name" type="text" aria-label="Add Item Name" required aria-required="true"
+                        aria-invalid="true" id="itemName" name="itemName" />
+                </div>
+                <div id="quantityList">
+                    <label for="quantity">Quantity * </label>
+                    <input title="Add Item Quantity" type="number"
+                        aria-label="Add Item Quantity - An integer between one to one hundred million" required
+                        aria-required="true" aria-invalid="true" min="1" max="100000000" id="quantity"
+                        name="quantity" />
+                </div>
+                <div id="submitList">
+                    <button type="submit" id="submitResponse" name="submitResponse">
+                        Add Item
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="groceryList">
+            <h2>Grocery List</h2>
+        </div>
+    </main>
+</body>
+
+</html>
