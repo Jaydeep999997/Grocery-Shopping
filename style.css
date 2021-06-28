@@ -48,6 +48,36 @@ main {
   height: 87%;
 }
 
+.feedback {
+  height: 20%;
+  margin: 1rem auto;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  row-gap: 1rem;
+}
+
+.result {
+  color: white;
+  text-align: center;
+  font-size: var(--formFontSize);
+  padding: 0.2rem;
+  display: none;
+}
+
+#success-add,
+#success-edit,
+#success-delete {
+  background-color: rgb(2, 126, 2);
+}
+
+#item-name-failure,
+#item-quantity-failure,
+#edit-failure {
+  background-color: #d83933;
+}
+
 .inputForm {
   width: 40%;
 }
@@ -59,7 +89,6 @@ form {
   min-height: 320px;
   height: 35%;
   margin: auto;
-  margin-top: 1.5rem;
   list-style-type: none;
   display: flex;
   flex-direction: row;
@@ -134,19 +163,19 @@ input[type="number"]::-webkit-inner-spin-button {
   padding: 3% 9%;
 }
 
-.inputForm button {
+form button {
   background-color: #1364fa;
 }
 
-.inputForm button:hover {
+form button:hover {
   background-color: #034edb;
 }
 
-.inputForm button:active {
+form button:active {
   background-color: #033ba3;
 }
 
-.inputForm button:focus {
+form button:focus {
   background-color: #1364fa;
 }
 
@@ -271,15 +300,6 @@ button:focus {
   margin-top: 1.5rem;
 }
 
-footer {
-  position: absolute;
-  bottom: 0px;
-  background-color: #8971fd93;
-  width: 100%;
-  text-align: center;
-  font-size: var(--formFontSize);
-}
-
 /* Media queries 
 
 1600px: name quantity 
@@ -330,9 +350,12 @@ footer {
     --itemFontSize: 0.9rem;
   }
   #nameList,
-  #quantityList,
+  #quantityList {
+    height: 37%;
+    width: 100%;
+  }
   #submitList {
-    height: 33%;
+    height: 26%;
     width: 100%;
   }
   .inputForm input {
@@ -361,6 +384,7 @@ footer {
     margin-top: 10%;
   }
   .inputForm {
+    height: 45rem;
     width: 100%;
   }
   form {
@@ -370,7 +394,6 @@ footer {
     padding: 1% 6%;
   }
   .groceryList {
-    margin-top: 10%;
     margin-bottom: 15%;
     width: 96%;
     max-height: 50rem;
@@ -400,9 +423,6 @@ footer {
     --h2FontSize: 1.5rem;
     --formFontSize: 0.95rem;
     --itemFontSize: 0.75rem;
-  }
-  .groceryList {
-    margin-top: 30%;
   }
   .groceryList .name,
   .groceryList .quan {

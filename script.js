@@ -1,14 +1,27 @@
-const form = document.querySelector("form");
+const feedback = document.querySelector(".feedback");
+const successAdd = document.querySelector("#success-add");
+const successEdit = document.querySelector("#success-edit");
+const successDelete = document.querySelector("#success-delete");
+const nameFailure = document.querySelector("#item-name-failure");
+const quantityFailure = document.querySelector("#item-quantity-failure");
+const editFailure = document.querySelector("#edit-failure");
+
 const formTitle = document.querySelector(".inputForm h2");
+const form = document.querySelector("form");
 const nameInput = document.querySelector(`[type="text"]`);
 const quantityInput = document.querySelector(`[type="number"]`);
 const formSubmit = document.querySelector("#submitList button");
+
 const groceryList = document.querySelector(".groceryList");
+
 const prefixID = "groceryItem";
 const prefixRegex = new RegExp(prefixID);
 const itemsInCart = new Map();
 const EMPTY_MSG = "Empty Cart, Nothing to Show!";
+const DELAY = 30000;
 
+let clearStatusTO = "";
+let statusQueue = [];
 let currentEdit = "";
 let currentItemID = 0;
 
@@ -136,23 +149,152 @@ function initialize() {
   }
 }
 
+// add feedback pop up messages
+function addFeedback() {
+  // appropriate messages
+  for (let i = 0; i < statusQueue.length; i++) {
+    statusQueue[i].style.display = "block";
+  }
+
+  // message container
+  feedback.setAttribute("aria-hidden", "false");
+  feedback.setAttribute("role", "alert");
+
+  // clear message queue
+  statusQueue = [];
+
+  // set timeout to remove pop ups
+  clearStatusTO = setTimeout(removeFeedback, DELAY);
+}
+
+// remove feedback pop up messages
+function removeFeedback() {
+  // remove function call
+  clearTimeout(clearStatusTO);
+
+  // clear message queue
+  statusQueue = [];
+
+  // for all children, display: none
+  for (let i = 0; i < feedback.children.length; i++) {
+    feedback.children[i].style.display = "none";
+  }
+
+  // message container
+  feedback.setAttribute("role", "generic");
+  feedback.setAttribute("aria-hidden", "true");
+}
+
+// check if item name is correct
+// - atleast one char other than white space
+function validateName(name) {
+  name = name.trim();
+  return name.length !== 0;
+}
+
+// check if item quantity is correct
+// -  Integer between 1 to 100,000,000
+function validateQuantity(quantity) {
+  // remove leading zeros
+  quantity = quantity.replace(/^0+/, "");
+
+  // check if number is integer
+  let nonZero = false;
+  for (let i = quantity.length - 1; i >= 0; i--) {
+    nonZero |= quantity[i] >= "1" && quantity[i] <= "9";
+    if (quantity[i] === ".") {
+      if (i === 0) {
+        return false;
+      }
+      if (nonZero) {
+        return false;
+      }
+      quantity = quantity.substr(0, i);
+      break;
+    }
+  }
+
+  // checks for larger number
+  if (quantity.length > 9) {
+    return false;
+  }
+
+  // this is probably redundant, since html will check for this
+  for (let x in quantity) {
+    if ((quantity[x] < "0" || quantity[x] > "9") && quantity[x] !== ".") {
+      return false;
+    }
+  }
+
+  quantity = Number(quantity);
+
+  // this is also redundant
+  if (!Number.isInteger(quantity)) {
+    return false;
+  }
+
+  // check if number satisfies range constraints
+  if (quantity < 1 || quantity > 100000000) {
+    return false;
+  }
+
+  return true;
+}
+
+// verify name and quantity constraints and add appropriate messages in queue
+function validateInput(itemName, itemQuan) {
+  let isValidName = validateName(itemName);
+  let isValidQuantity = validateQuantity(itemQuan);
+
+  // if both are valid
+  if (isValidName && isValidQuantity) {
+    if (formSubmit.innerText === "Edit Item") {
+      statusQueue.push(successEdit);
+    } else {
+      statusQueue.push(successAdd);
+    }
+  }
+
+  // if quantity is invalid
+  if (!isValidQuantity) {
+    statusQueue.push(quantityFailure);
+  }
+
+  // if name is invalid
+  if (!isValidName) {
+    statusQueue.push(nameFailure);
+  }
+
+  return isValidName && isValidQuantity;
+}
+
 // 'add item' button
 function submitEventHandler(event) {
   event.preventDefault();
 
+  // remove all callbacks and messages
+  removeFeedback();
+
   let itemName = nameInput.value;
-  itemName = itemName.trim();
-  if (itemName.length === 0) {
+  let itemQuan = quantityInput.value;
+
+  if (!validateInput(itemName, itemQuan)) {
     updateForm("", "", "Add Item", 0);
-    alert("Item name must contain atleast one chacter!");
+    addFeedback();
     return;
   }
 
-  let itemQuan = Number(quantityInput.value);
+  itemName = itemName.trim();
+  itemQuan = Number(itemQuan);
+
   if (formSubmit.innerText === "Edit Item") {
+    // item with the same name already exists, in case of edit
     if (itemName !== currentEdit && itemsInCart.has(itemName)) {
-      alert(`Item with name ${itemName} is already present in a Cart.`);
+      editFailure.innerText = `Item with name ${itemName} is already present in a Cart.`;
+      statusQueue = [];
+      statusQueue.push(editFailure);
       updateForm("", "", "Add Item", 0);
+      addFeedback();
       return;
     }
     Remove(currentEdit);
@@ -166,11 +308,15 @@ function submitEventHandler(event) {
   Add(itemName, itemQuan);
 
   updateForm("", "", "Add Item", 0);
+  addFeedback();
 }
 
 // edit button
 function editEventHandler(event) {
   event.preventDefault();
+
+  // remove all callbacks and messages
+  removeFeedback();
 
   let parent = this.parentNode;
   let itemName = parent.children[0].innerText; // name
@@ -180,7 +326,7 @@ function editEventHandler(event) {
   // update the form
   updateForm(
     itemName,
-    itemQuan.substr(10, itemQuan.length - 10),
+    Number(itemsInCart.get(itemName)["Quantity"]),
     "Edit Item",
     1
   );
@@ -192,6 +338,9 @@ function deleteEventHandler(event) {
     return;
   }
 
+  // remove all callbacks and messages
+  removeFeedback();
+
   let parent = this.parentNode;
   let itemName = parent.querySelector("p").innerText;
 
@@ -200,10 +349,15 @@ function deleteEventHandler(event) {
   }
 
   Remove(itemName);
+
+  statusQueue.push(successDelete);
+  addFeedback();
 }
 
+// check if there are no items in a cart
 checkEmpty();
 
+// restore data from local storage
 initialize();
 
 form.addEventListener("submit", submitEventHandler);
