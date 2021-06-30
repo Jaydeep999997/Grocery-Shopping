@@ -3,7 +3,11 @@ const successAdd = document.querySelector("#success-add");
 const successEdit = document.querySelector("#success-edit");
 const successDelete = document.querySelector("#success-delete");
 const nameFailure = document.querySelector("#item-name-failure");
-const quantityFailure = document.querySelector("#item-quantity-failure");
+const lowerRangeFailure = document.querySelector("#lower-range-failure");
+const upperRangeFailure = document.querySelector("#upper-range-failure");
+const positiveIntegerFailure = document.querySelector(
+  "#positive-integer-failure"
+);
 const editFailure = document.querySelector("#edit-failure");
 
 const formTitle = document.querySelector(".inputForm h2");
@@ -26,12 +30,13 @@ let currentEdit = "";
 let currentItemID = 0;
 
 // new button
-function getButton(buttonName) {
+function getButton(buttonName, controlID) {
   let newButton = document.createElement("button");
   newButton.setAttribute("type", "button");
   newButton.innerText = buttonName;
   buttonName = buttonName.toLowerCase();
   newButton.classList.add(buttonName);
+  newButton.setAttribute("aria-describedby", controlID);
   buttonName === "edit"
     ? newButton.addEventListener("click", editEventHandler)
     : newButton.addEventListener("click", deleteEventHandler);
@@ -39,10 +44,11 @@ function getButton(buttonName) {
 }
 
 // new paragraph
-function getParagraph(className, itemName) {
+function getParagraph(idName, className, name) {
   let newParagraph = document.createElement("p");
-  newParagraph.innerText = itemName;
+  newParagraph.innerText = name;
   newParagraph.classList.add(className);
+  newParagraph.setAttribute("id", idName);
   return newParagraph;
 }
 
@@ -52,7 +58,9 @@ function checkEmpty() {
     if (groceryList.children.length === 2) {
       groceryList.removeChild(groceryList.children[1]);
     }
-    groceryList.appendChild(getParagraph("emptyPlace", EMPTY_MSG));
+    groceryList.appendChild(
+      getParagraph("emptyPlace", "emptyPlace", EMPTY_MSG)
+    );
   }
 }
 
@@ -90,10 +98,12 @@ function Add(itemName, itemQuan) {
   const listLocation = document.querySelector(".groceryList ul");
   let node = document.createElement("li");
   node.setAttribute("id", itemID);
-  node.appendChild(getParagraph("name", itemName));
-  node.appendChild(getParagraph("quan", `Quantity: ${itemQuan}`));
-  node.appendChild(getButton("Edit"));
-  node.appendChild(getButton("Delete"));
+  node.appendChild(getParagraph(`${itemID}-name`, "name", itemName));
+  node.appendChild(
+    getParagraph(`${itemID}-quantity`, "quan", `Quantity: ${itemQuan}`)
+  );
+  node.appendChild(getButton("Edit", `${itemID}-name`));
+  node.appendChild(getButton("Delete", `${itemID}-name`));
   listLocation.prepend(node);
 
   // Add in localStorage
@@ -156,10 +166,6 @@ function addFeedback() {
     statusQueue[i].style.display = "block";
   }
 
-  // message container
-  feedback.setAttribute("aria-hidden", "false");
-  feedback.setAttribute("role", "alert");
-
   // clear message queue
   statusQueue = [];
 
@@ -179,17 +185,20 @@ function removeFeedback() {
   for (let i = 0; i < feedback.children.length; i++) {
     feedback.children[i].style.display = "none";
   }
-
-  // message container
-  feedback.setAttribute("role", "generic");
-  feedback.setAttribute("aria-hidden", "true");
 }
 
 // check if item name is correct
 // - atleast one char other than white space
 function validateName(name) {
   name = name.trim();
-  return name.length !== 0;
+
+  if (name.length === 0) {
+    statusQueue.push(nameFailure);
+    addFeedback();
+    return false;
+  }
+
+  return true;
 }
 
 // check if item quantity is correct
@@ -204,9 +213,13 @@ function validateQuantity(quantity) {
     nonZero |= quantity[i] >= "1" && quantity[i] <= "9";
     if (quantity[i] === ".") {
       if (i === 0) {
+        statusQueue.push(lowerRangeFailure);
+        addFeedback();
         return false;
       }
       if (nonZero) {
+        statusQueue.push(positiveIntegerFailure);
+        addFeedback();
         return false;
       }
       quantity = quantity.substr(0, i);
@@ -214,27 +227,34 @@ function validateQuantity(quantity) {
     }
   }
 
-  // checks for larger number
-  if (quantity.length > 9) {
-    return false;
-  }
-
-  // this is probably redundant, since html will check for this
+  // checks for negative number
   for (let x in quantity) {
     if ((quantity[x] < "0" || quantity[x] > "9") && quantity[x] !== ".") {
+      statusQueue.push(positiveIntegerFailure);
+      addFeedback();
       return false;
     }
   }
 
-  quantity = Number(quantity);
-
-  // this is also redundant
-  if (!Number.isInteger(quantity)) {
+  // checks for larger number
+  if (quantity.length > 9) {
+    statusQueue.push(upperRangeFailure);
+    addFeedback();
     return false;
   }
 
+  quantity = Number(quantity);
+
   // check if number satisfies range constraints
-  if (quantity < 1 || quantity > 100000000) {
+  if (quantity < 1) {
+    statusQueue.push(lowerRangeFailure);
+    addFeedback();
+    return false;
+  }
+
+  if (quantity > 100000000) {
+    statusQueue.push(upperRangeFailure);
+    addFeedback();
     return false;
   }
 
@@ -243,29 +263,19 @@ function validateQuantity(quantity) {
 
 // verify name and quantity constraints and add appropriate messages in queue
 function validateInput(itemName, itemQuan) {
-  let isValidName = validateName(itemName);
-  let isValidQuantity = validateQuantity(itemQuan);
-
-  // if both are valid
-  if (isValidName && isValidQuantity) {
-    if (formSubmit.innerText === "Edit Item") {
-      statusQueue.push(successEdit);
-    } else {
-      statusQueue.push(successAdd);
-    }
+  if (!validateName(itemName)) {
+    nameInput.value = "";
+    nameInput.focus();
+    return false;
   }
 
-  // if quantity is invalid
-  if (!isValidQuantity) {
-    statusQueue.push(quantityFailure);
+  if (!validateQuantity(itemQuan)) {
+    quantityInput.value = "";
+    quantityInput.focus();
+    return false;
   }
 
-  // if name is invalid
-  if (!isValidName) {
-    statusQueue.push(nameFailure);
-  }
-
-  return isValidName && isValidQuantity;
+  return true;
 }
 
 // 'add item' button
@@ -279,8 +289,6 @@ function submitEventHandler(event) {
   let itemQuan = quantityInput.value;
 
   if (!validateInput(itemName, itemQuan)) {
-    updateForm("", "", "Add Item", 0);
-    addFeedback();
     return;
   }
 
@@ -290,14 +298,16 @@ function submitEventHandler(event) {
   if (formSubmit.innerText === "Edit Item") {
     // item with the same name already exists, in case of edit
     if (itemName !== currentEdit && itemsInCart.has(itemName)) {
-      editFailure.innerText = `Item with name ${itemName} is already present in a Cart.`;
-      statusQueue = [];
+      editFailure.innerText = `✘ Item with name "${itemName}" is already present in a Cart.`;
       statusQueue.push(editFailure);
       updateForm("", "", "Add Item", 0);
       addFeedback();
       return;
     }
+    statusQueue.push(successEdit);
     Remove(currentEdit);
+  } else {
+    statusQueue.push(successAdd);
   }
 
   if (itemsInCart.has(itemName)) {
@@ -320,7 +330,6 @@ function editEventHandler(event) {
 
   let parent = this.parentNode;
   let itemName = parent.children[0].innerText; // name
-  let itemQuan = parent.children[1].innerText; // quantity
   currentEdit = parent.children[0].innerText; // name of item, which we are editing
 
   // update the form
@@ -330,6 +339,8 @@ function editEventHandler(event) {
     "Edit Item",
     1
   );
+
+  nameInput.focus();
 }
 
 // delete button

@@ -14,22 +14,41 @@
 </head>
 
 <body>
+    <ul class="skip-links">
+        <li id="skip-to-main"> <a href="#mainContent">Skip to main content</a> </li>
+        <li id="skip-to-form"> <a href="#formContent"> Skip to form </a> </li>
+        <li id="skip-to-list"> <a href="#groceryListContent"> Skip to grocery list </a> </li>
+    </ul>
+
     <header>
         <h1>Grocery Cart</h1>
     </header>
 
-    <main>
+    <main tabindex="-1" id="mainContent">
         <div class="inputForm">
             <h2>Add Grocery Item</h2>
-            <div aria-hidden="true" tabindex="0" aria-label="Form Status" class="feedback">
-                <h3 tabindex="0" class="result" id="success-add">Great! Item added successfully</h3>
-                <h3 tabindex="0" class="result" id="success-edit">Great! Item Edited successfully</h3>
-                <h3 tabindex="0" class="result" id="item-name-failure">Please enter a valid Item Name</h3>
-                <h3 tabindex="0" class="result" id="item-quantity-failure">Please enter a valid Item Quantity</h3>
-                <h3 tabindex="0" class="result" id="success-delete">Great! Item deleted successfully</h3>
-                <h3 tabindex="0" class="result" id="edit-failure"></h3>
+            <div class="feedback">
+                <h3 aria-live="polite" tabindex="0" class="result success" id="success-add">✔ Great! Item added
+                    successfully</h3>
+                <h3 aria-live="polite" tabindex="0" class="result success" id="success-edit">✔ Great! Item edited
+                    successfully
+                </h3>
+                <h3 aria-live="polite" tabindex="0" class="result success" id="success-delete">✔ Great! Item deleted
+                    successfully
+                </h3>
+                <h3 aria-live="assertive" tabindex="0" class="result failure" id="edit-failure"></h3>
+                <h3 aria-live="assertive" tabindex="0" class="result failure" id="item-name-failure">✘ Name must contain
+                    atleast one character</h3>
+                <h3 aria-live="assertive" tabindex="0" class="result failure" id="lower-range-failure">✘ Quantity must
+                    be
+                    greater than or equal to one </h3>
+                <h3 aria-live="assertive" tabindex="0" class="result failure" id="upper-range-failure">✘ Quantity must
+                    be
+                    less than or equal to one hundred million</h3>
+                <h3 aria-live="assertive" tabindex="0" class="result failure" id="positive-integer-failure">✘ Quantity
+                    must be positive and integer</h3>
             </div>
-            <form novalidate aria-label="Fill the form below to add or update grocery items. All fields marked with an asterisk are
+            <form tabindex="-1" novalidate id="formContent" aria-label="Fill the form below to add or update grocery items. All fields marked with an asterisk are
                 mandatory">
                 <div id="nameList">
                     <label for="itemName">Item Name * </label>
@@ -50,7 +69,7 @@
             </form>
         </div>
 
-        <div class="groceryList">
+        <div tabindex="-1" id="groceryListContent" class="groceryList">
             <h2>Grocery List</h2>
         </div>
     </main>

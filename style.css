@@ -14,7 +14,6 @@
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
   font-weight: bold;
-  transition: all 0.1s ease;
   border-radius: var(--borderRadius);
 }
 
@@ -31,14 +30,39 @@ body {
   height: 100%;
 }
 
+.skip-links {
+  list-style-type: none;
+}
+
+.skip-links a {
+  border-radius: 0px;
+  position: absolute;
+  height: 1px;
+  width: 1px;
+  top: -1000px;
+  text-decoration: none;
+  background-color: black;
+  color: white;
+}
+
+.skip-links a:focus {
+  height: auto;
+  width: auto;
+  top: 0px;
+  padding: 0.4em 0.6em;
+  font-weight: bold;
+  font-size: var(--formFontSize);
+  outline: none;
+}
+
 header {
-  height: 10%;
+  height: fit-content;
+  margin-top: 3rem;
 }
 
 header h1 {
   text-align: center;
   font-size: var(--h1FontSize);
-  margin-bottom: 2%;
 }
 
 main {
@@ -49,7 +73,7 @@ main {
 }
 
 .feedback {
-  height: 20%;
+  height: 15%;
   margin: 1rem auto;
   width: 90%;
   display: flex;
@@ -66,15 +90,11 @@ main {
   display: none;
 }
 
-#success-add,
-#success-edit,
-#success-delete {
+.success {
   background-color: rgb(2, 126, 2);
 }
 
-#item-name-failure,
-#item-quantity-failure,
-#edit-failure {
+.failure {
   background-color: #d83933;
 }
 
