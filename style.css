@@ -99,6 +99,7 @@ main {
 }
 
 .result {
+  word-wrap: break-word;
   color: white;
   text-align: center;
   font-size: var(--formFontSize);
