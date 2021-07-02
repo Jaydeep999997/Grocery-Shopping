@@ -3,6 +3,8 @@ const successAdd = document.querySelector("#success-add");
 const successEdit = document.querySelector("#success-edit");
 const successDelete = document.querySelector("#success-delete");
 const nameFailure = document.querySelector("#item-name-failure");
+const notPresentFailure = document.querySelector("#not-present-failure");
+const emptyQuantityFailure = document.querySelector("#empty-quantity-failure");
 const lowerRangeFailure = document.querySelector("#lower-range-failure");
 const upperRangeFailure = document.querySelector("#upper-range-failure");
 const positiveIntegerFailure = document.querySelector(
@@ -11,12 +13,16 @@ const positiveIntegerFailure = document.querySelector(
 const editFailure = document.querySelector("#edit-failure");
 
 const formTitle = document.querySelector(".inputForm h2");
-const form = document.querySelector("form");
-const nameInput = document.querySelector(`[type="text"]`);
-const quantityInput = document.querySelector(`[type="number"]`);
+const form = document.querySelector("#formContent");
+const nameInput = document.querySelector(`#formContent [type="text"]`);
+const quantityInput = document.querySelector(`#formContent [type="number"]`);
 const formSubmit = document.querySelector("#submitList button");
 
 const groceryList = document.querySelector(".groceryList");
+
+const searchForm = document.querySelector(".skip-links form");
+const searchInput = document.querySelector(`.skip-links [type="text"]`);
+const searchSubmit = document.querySelector(`.skip-links button`);
 
 const prefixID = "groceryItem";
 const prefixRegex = new RegExp(prefixID);
@@ -204,6 +210,15 @@ function validateName(name) {
 // check if item quantity is correct
 // -  Integer between 1 to 100,000,000
 function validateQuantity(quantity) {
+  if (
+    quantity.length === 0 ||
+    (quantity.length === 1 && (quantity[0] === "." || quantity[0] === "-"))
+  ) {
+    statusQueue.push(emptyQuantityFailure);
+    addFeedback();
+    return false;
+  }
+
   // remove leading zeros
   quantity = quantity.replace(/^0+/, "");
 
@@ -340,11 +355,14 @@ function editEventHandler(event) {
     1
   );
 
+  document.getElementById("formContent").scrollIntoView(true);
   nameInput.focus();
 }
 
 // delete button
 function deleteEventHandler(event) {
+  event.preventDefault();
+
   if (!confirm("Are you sure you want to delete this item?")) {
     return;
   }
@@ -365,10 +383,41 @@ function deleteEventHandler(event) {
   addFeedback();
 }
 
+// search item by name in a skip link
+function searchEventHandler(event) {
+  event.preventDefault();
+
+  removeFeedback();
+
+  const itemName = searchInput.value.trim();
+  searchInput.value = "";
+
+  // item name is not valid
+  if (!validateName(itemName)) {
+    searchInput.focus();
+    return;
+  }
+
+  // item with given name is not present in a cart
+  if (!itemsInCart.has(itemName)) {
+    notPresentFailure.innerText = `✘ Item with name ${itemName} is not present in a cart.`;
+    statusQueue.push(notPresentFailure);
+    addFeedback();
+    searchInput.focus();
+    return;
+  }
+
+  document.querySelector(`#${itemsInCart.get(itemName)["ID"]} .edit`).focus();
+  document
+    .querySelector(`#${itemsInCart.get(itemName)["ID"]}`)
+    .scrollIntoView(true);
+}
+
 // check if there are no items in a cart
 checkEmpty();
 
 // restore data from local storage
 initialize();
 
+searchForm.addEventListener("submit", searchEventHandler);
 form.addEventListener("submit", submitEventHandler);

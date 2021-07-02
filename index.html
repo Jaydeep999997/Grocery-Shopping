@@ -18,6 +18,20 @@
         <li id="skip-to-main"> <a href="#mainContent">Skip to main content</a> </li>
         <li id="skip-to-form"> <a href="#formContent"> Skip to form </a> </li>
         <li id="skip-to-list"> <a href="#groceryListContent"> Skip to grocery list </a> </li>
+        <li id="skip-to-item">
+            <form tabindex="0" novalidate aria-label="Search item by name">
+                <div class="search-item-name">
+                    <label for="search-name">Item Name * </label>
+                    <input type="text" aria-label="Add Item Name" aria-required="true" aria-invalid="true"
+                        id="search-name" />
+                </div>
+                <div class="search-submit">
+                    <button type="submit" id="submit-item-name">
+                        Search
+                    </button>
+                </div>
+            </form>
+        </li>
     </ul>
 
     <header>
@@ -39,12 +53,13 @@
                 <h3 aria-live="assertive" tabindex="0" class="result failure" id="edit-failure"></h3>
                 <h3 aria-live="assertive" tabindex="0" class="result failure" id="item-name-failure">✘ Name must contain
                     atleast one character</h3>
+                <h3 aria-live="assertive" tabindex="0" class="result failure" id="not-present-failure"></h3>
+                <h3 aria-live="assertive" tabindex="0" class="result failure" id="empty-quantity-failure">✘ Quantity
+                    must contain atleast one number </h3>
                 <h3 aria-live="assertive" tabindex="0" class="result failure" id="lower-range-failure">✘ Quantity must
-                    be
-                    greater than or equal to one </h3>
+                    be greater than or equal to one </h3>
                 <h3 aria-live="assertive" tabindex="0" class="result failure" id="upper-range-failure">✘ Quantity must
-                    be
-                    less than or equal to one hundred million</h3>
+                    be less than or equal to one hundred million</h3>
                 <h3 aria-live="assertive" tabindex="0" class="result failure" id="positive-integer-failure">✘ Quantity
                     must be positive and integer</h3>
             </div>

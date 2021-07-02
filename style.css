@@ -34,7 +34,21 @@ body {
   list-style-type: none;
 }
 
-.skip-links a {
+.skip-links form div {
+  display: inline-block;
+  margin: auto;
+}
+
+#submit-item-name {
+  padding: 0.1rem 0.5rem;
+}
+
+.skip-links * {
+  font-size: var(--formFontSize);
+}
+
+.skip-links a,
+.skip-links form {
   border-radius: 0px;
   position: absolute;
   height: 1px;
@@ -45,7 +59,9 @@ body {
   color: white;
 }
 
-.skip-links a:focus {
+.skip-links a:focus,
+.skip-links form:focus,
+.skip-links form:focus-within {
   height: auto;
   width: auto;
   top: 0px;
@@ -102,7 +118,7 @@ main {
   width: 40%;
 }
 
-form {
+#formContent {
   background: #ffffff87;
   box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
   width: 85%;
@@ -115,7 +131,7 @@ form {
   flex-wrap: wrap;
 }
 
-form * {
+#formContent * {
   font-size: var(--formFontSize);
   display: flex;
   flex-direction: column;
@@ -123,7 +139,7 @@ form * {
   align-items: center;
 }
 
-form.highlight {
+#formContent.highlight {
   box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
   transform: scale(1.02);
 }
@@ -155,14 +171,14 @@ input:focus {
   transition: background-color 500000000s ease-in-out 0s;
 }
 
-input,
-label,
-span {
+#formContent input,
+#formContent label,
+#formContent span {
   display: block;
   width: 75%;
 }
 
-input {
+form input {
   border: 0.1rem solid var(--in);
   background-color: var(--in);
 }
@@ -177,7 +193,7 @@ input[type="number"]::-webkit-inner-spin-button {
   cursor: pointer;
 }
 
-.inputForm button {
+form button {
   border: none;
   color: white;
   padding: 3% 9%;
@@ -407,7 +423,7 @@ button:focus {
     height: 45rem;
     width: 100%;
   }
-  form {
+  #formContent {
     height: 25rem;
   }
   .inputForm button {
@@ -452,7 +468,7 @@ button:focus {
   .groceryList .delete {
     margin: 3% 30%;
   }
-  form {
+  #formContent {
     width: 90%;
   }
   .inputForm button {
