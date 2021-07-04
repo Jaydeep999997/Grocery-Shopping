@@ -5,7 +5,7 @@
   --h2FontSize: 2rem;
   --formFontSize: 1.1rem;
   --itemFontSize: 1rem;
-  --focusRing: 0.15rem;
+  --focusRing: 0.16rem;
 }
 
 * {
@@ -28,6 +28,111 @@ html {
 
 body {
   height: 100%;
+}
+
+/* Dialog  */
+
+.dialog {
+  display: none;
+  border-radius: 0;
+}
+
+.dialog * {
+  border-radius: 0;
+}
+
+.dialog.opened {
+  display: block;
+}
+
+.dialog h2,
+.dialog p {
+  border-bottom: var(--focusRing) solid white;
+}
+
+.dialog h2:focus,
+.dialog p:focus {
+  outline: none;
+  border-bottom: var(--focusRing) solid black;
+}
+
+.dialog_window {
+  display: inline-block;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border: 0.25rem solid black;
+  padding: 2rem 4rem;
+  z-index: 101;
+}
+
+.dialog_mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: black;
+  opacity: 0.5;
+  overflow: hidden;
+  z-index: 100;
+}
+
+.dialog_title {
+  text-align: center;
+  font-size: var(--h2FontSize);
+  margin-bottom: 1rem;
+}
+
+.dialog_message {
+  text-align: center;
+  font-size: var(--formFontSize);
+  margin-bottom: 1rem;
+}
+
+.dialog_button {
+  font-size: var(--formFontSize);
+  padding: 0.3rem 1.3rem;
+  border-radius: var(--borderRadius);
+  color: white;
+}
+
+.button-wrapper {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.yes {
+  background-color: #d83933;
+  border: var(--focusRing) solid #d83933;
+}
+
+.yes:hover {
+  background-color: #b50909;
+}
+
+.yes:active {
+  background-color: #8b0a03;
+}
+
+.no {
+  background-color: rgb(2, 126, 2);
+  border: var(--focusRing) solid rgb(2, 126, 2);
+}
+
+.no:hover {
+  background-color: rgb(2, 104, 2);
+}
+
+.no:active {
+  background-color: rgb(1, 83, 1);
+}
+
+.dialog_button:focus {
+  outline: none;
+  border: var(--focusRing) solid black;
 }
 
 .skip-links {
@@ -73,7 +178,7 @@ body {
 
 header {
   height: fit-content;
-  margin-top: 3rem;
+  padding-top: 3rem;
 }
 
 header h1 {

@@ -1,18 +1,46 @@
+// display status
 const feedback = document.querySelector(".feedback");
 const result = document.querySelector(".result");
 
+// form
 const formTitle = document.querySelector(".inputForm h2");
 const form = document.querySelector("#formContent");
 const nameInput = document.querySelector(`#formContent [type="text"]`);
 const quantityInput = document.querySelector(`#formContent [type="number"]`);
 const formSubmit = document.querySelector("#submitList button");
 
+// grocery list
 const groceryList = document.querySelector(".groceryList");
 
+// search skip link
 const searchForm = document.querySelector(".skip-links form");
 const searchInput = document.querySelector(`.skip-links [type="search"]`);
 const searchSubmit = document.querySelector(`.skip-links button`);
 
+// confirmation dialog
+const dialog = document.querySelector(".dialog");
+const dialogWindow = document.querySelector(".dialog_window");
+const dialogMask = document.querySelector(".dialog_mask");
+const agree = document.querySelector(".yes");
+const disAgree = document.querySelector(".no");
+
+// some useful constant variables
+const prefixID = "groceryItem";
+const prefixRegex = new RegExp(prefixID);
+const itemsInCart = new Map();
+const EMPTY_MSG = "Empty Cart, Nothing to Show!";
+const DELAY = 20000;
+const LOWER = 1;
+const UPPER = 100000000;
+
+// global variables which may change over time
+let lastActive;
+let clearStatusTO;
+let currentEdit;
+let currentDelete;
+let currentItemID = 0;
+
+// display status according to error and success
 const status = {
   addSuccess: "✔ Great! Item added successfully",
   editSuccess: "✔ Great! Item edited successfully",
@@ -27,20 +55,8 @@ const status = {
   integerFailure: "✘ Quantity must be an integer",
 };
 
-const prefixID = "groceryItem";
-const prefixRegex = new RegExp(prefixID);
-const itemsInCart = new Map();
-const EMPTY_MSG = "Empty Cart, Nothing to Show!";
-const DELAY = 20000;
-const LOWER = 1;
-const UPPER = 1000000000;
-
-let clearStatusTO = "";
-let currentEdit = "";
-let currentItemID = 0;
-
 // new button
-function getButton(buttonName, controlID) {
+const getButton = function (buttonName, controlID) {
   let newButton = document.createElement("button");
   newButton.setAttribute("type", "button");
   newButton.innerText = buttonName;
@@ -52,19 +68,19 @@ function getButton(buttonName, controlID) {
     ? newButton.addEventListener("click", editEventHandler)
     : newButton.addEventListener("click", deleteEventHandler);
   return newButton;
-}
+};
 
 // new paragraph
-function getParagraph(idName, className, name) {
+const getParagraph = function (idName, className, name) {
   let newParagraph = document.createElement("p");
   newParagraph.innerText = name;
   newParagraph.classList.add(className);
   newParagraph.setAttribute("id", idName);
   return newParagraph;
-}
+};
 
 // display empty message, if the cart is empty
-function checkEmpty() {
+const checkEmpty = function () {
   if (itemsInCart.size === 0) {
     if (groceryList.children.length === 2) {
       groceryList.removeChild(groceryList.children[1]);
@@ -73,10 +89,10 @@ function checkEmpty() {
       getParagraph("emptyPlace", "emptyPlace", EMPTY_MSG)
     );
   }
-}
+};
 
 // remove an item with given item name
-function Remove(itemName) {
+const Remove = function (itemName) {
   let itemID = itemsInCart.get(itemName)["ID"];
   const listLocation = document.querySelector(".groceryList ul");
 
@@ -92,10 +108,10 @@ function Remove(itemName) {
 
   // If cart is empty, display appropriate message
   checkEmpty();
-}
+};
 
 // add an item with given name and quantity
-function Add(itemName, itemQuan) {
+const Add = function (itemName, itemQuan) {
   let itemID = `${prefixID}${currentItemID}`;
 
   // if we are initializing list, remove empty message
@@ -133,10 +149,10 @@ function Add(itemName, itemQuan) {
   });
 
   ++currentItemID; // Increment the global ID variable
-}
+};
 
 // Change the main form to display edit / add
-function updateForm(itemName, itemQuan, buttonTitle, editMode) {
+const updateForm = function (itemName, itemQuan, buttonTitle, editMode) {
   nameInput.value = itemName;
   quantityInput.value = itemQuan;
   formSubmit.innerText = buttonTitle;
@@ -148,10 +164,10 @@ function updateForm(itemName, itemQuan, buttonTitle, editMode) {
     form.classList.remove("highlight");
     formTitle.innerText = "Add Grocery Item";
   }
-}
+};
 
 // initialize cart by fetching items from localStorage
-function initialize() {
+const initialize = function () {
   let toBeAdded = [];
   for (let i = 0; i < localStorage.length; i++) {
     let currentID = localStorage.key(i);
@@ -168,10 +184,10 @@ function initialize() {
   for (let idx in toBeAdded) {
     Add(toBeAdded[idx][1], toBeAdded[idx][2]);
   }
-}
+};
 
 // add feedback pop up messages
-function addFeedback(key, toAdd, toRemove) {
+const addFeedback = function (key, toAdd, toRemove) {
   result.classList.remove(toRemove);
   result.classList.add(toAdd);
 
@@ -185,35 +201,35 @@ function addFeedback(key, toAdd, toRemove) {
 
   // set timeout to remove pop ups
   clearStatusTO = setTimeout(removeFeedback, DELAY);
-}
+};
 
 // remove feedback pop up messages
-function removeFeedback() {
+const removeFeedback = function () {
   // remove function call
   clearTimeout(clearStatusTO);
 
   // set display: none
   result.style.display = "none";
-}
+};
 
 /*
  * check if item name is correct
  * - atleast one char other than white space
  */
-function validateName(name) {
+const validateName = function (name) {
   if (name.trim().length === 0) {
     addFeedback("nameFailure", "failure", "success");
     return false;
   }
 
   return true;
-}
+};
 
 /*
  * check if item quantity is correct
  * -  Integer between 1 to 100,000,000
  */
-function validateQuantity(quantity) {
+const validateQuantity = function (quantity) {
   // check if the quantity field is empty
   if (
     quantity.length === 0 ||
@@ -244,10 +260,10 @@ function validateQuantity(quantity) {
   }
 
   return true;
-}
+};
 
 // verify name and quantity constraints and add appropriate messages in queue
-function validateInput(itemName, itemQuan) {
+const validateInput = function (itemName, itemQuan) {
   if (!validateName(itemName)) {
     nameInput.value = "";
     nameInput.focus();
@@ -261,6 +277,84 @@ function validateInput(itemName, itemQuan) {
   }
 
   return true;
+};
+
+// close the dialog box
+const closeDialog = function () {
+  // remove event listeners
+  dialogMask.removeEventListener("click", closeDialog);
+  agree.removeEventListener("click", deleteCurrent);
+  disAgree.removeEventListener("click", closeDialog);
+  document.removeEventListener("keydown", checkCloseDialog);
+
+  // make all other elements focusable
+  Array.from(document.body.children).forEach((child) => {
+    if (child !== dialog) {
+      child.inert = false;
+    }
+  });
+
+  // remove `opened` class
+  dialog.classList.remove("opened");
+
+  // set back the focus to the last element
+  lastActive.focus();
+};
+
+// delete current item and close the dialog
+const deleteCurrent = function () {
+  // remove all callbacks and messages
+  removeFeedback();
+
+  // if current edit box is for the item which is deleted, close it
+  if (currentEdit === currentDelete) {
+    updateForm("", "", "Add Item", 0);
+  }
+
+  Remove(currentDelete);
+  closeDialog();
+  addFeedback("deleteSuccess", "success", "failure");
+};
+
+// if ESC key is pressed close the dialog
+const checkCloseDialog = function (event) {
+  if (event.keyCode === 27) {
+    event.preventDefault();
+    closeDialog();
+  }
+};
+
+// open confirmation dialog box
+function openDialog() {
+  // store the currently active element
+  lastActive = document.activeElement;
+
+  // make all other chindren of body non-focusable
+  Array.from(document.body.children).forEach((child) => {
+    if (child !== dialog) {
+      child.inert = true;
+    }
+  });
+
+  // change styling
+  dialog.classList.add("opened");
+
+  // add event listeners
+
+  //click any where other than box
+  dialogMask.addEventListener("click", closeDialog);
+
+  // press ESC
+  document.addEventListener("keydown", checkCloseDialog);
+
+  // respond Yes
+  agree.addEventListener("click", deleteCurrent);
+
+  // respond No
+  disAgree.addEventListener("click", closeDialog);
+
+  // focus on the first focusable child of dialog
+  dialog.querySelector(`[tabindex = "0"]`).focus();
 }
 
 // 'add item' button
@@ -331,23 +425,10 @@ function editEventHandler(event) {
 function deleteEventHandler(event) {
   event.preventDefault();
 
-  if (!confirm("Are you sure you want to delete this item?")) {
-    return;
-  }
-
-  // remove all callbacks and messages
-  removeFeedback();
-
   let parent = this.parentNode;
-  let itemName = parent.querySelector("p").innerText;
+  currentDelete = parent.querySelector("p").innerText;
 
-  if (currentEdit === itemName) {
-    updateForm("", "", "Add Item", 0);
-  }
-
-  Remove(itemName);
-
-  addFeedback("deleteSuccess", "success", "failure");
+  openDialog();
 }
 
 // search item by name in a skip link
