@@ -1,16 +1,5 @@
 const feedback = document.querySelector(".feedback");
-const successAdd = document.querySelector("#success-add");
-const successEdit = document.querySelector("#success-edit");
-const successDelete = document.querySelector("#success-delete");
-const nameFailure = document.querySelector("#item-name-failure");
-const notPresentFailure = document.querySelector("#not-present-failure");
-const emptyQuantityFailure = document.querySelector("#empty-quantity-failure");
-const lowerRangeFailure = document.querySelector("#lower-range-failure");
-const upperRangeFailure = document.querySelector("#upper-range-failure");
-const positiveIntegerFailure = document.querySelector(
-  "#positive-integer-failure"
-);
-const editFailure = document.querySelector("#edit-failure");
+const result = document.querySelector(".result");
 
 const formTitle = document.querySelector(".inputForm h2");
 const form = document.querySelector("#formContent");
@@ -21,17 +10,32 @@ const formSubmit = document.querySelector("#submitList button");
 const groceryList = document.querySelector(".groceryList");
 
 const searchForm = document.querySelector(".skip-links form");
-const searchInput = document.querySelector(`.skip-links [type="text"]`);
+const searchInput = document.querySelector(`.skip-links [type="search"]`);
 const searchSubmit = document.querySelector(`.skip-links button`);
+
+const status = {
+  addSuccess: "✔ Great! Item added successfully",
+  editSuccess: "✔ Great! Item edited successfully",
+  deleteSuccess: "✔ Great! Item deleted successfully",
+  nameFailure: "✘ Name must contain atleast one character",
+  editFailure: "✘ Item with given name already present in a cart",
+  searchFailure: "✘ Item with given name is not present in a cart",
+  emptyQuantityFailure: "✘ Quantity must contain atleast one number",
+  lowerRangeFailure: "✘ Quantity must be greater than or equal to one",
+  upperRangeFailure:
+    "✘ Quantity must be less than or equal to one hundred million",
+  integerFailure: "✘ Quantity must be an integer",
+};
 
 const prefixID = "groceryItem";
 const prefixRegex = new RegExp(prefixID);
 const itemsInCart = new Map();
 const EMPTY_MSG = "Empty Cart, Nothing to Show!";
-const DELAY = 30000;
+const DELAY = 20000;
+const LOWER = 1;
+const UPPER = 1000000000;
 
 let clearStatusTO = "";
-let statusQueue = [];
 let currentEdit = "";
 let currentItemID = 0;
 
@@ -43,6 +47,7 @@ function getButton(buttonName, controlID) {
   buttonName = buttonName.toLowerCase();
   newButton.classList.add(buttonName);
   newButton.setAttribute("aria-describedby", controlID);
+  newButton.setAttribute("aria-controls", controlID);
   buttonName === "edit"
     ? newButton.addEventListener("click", editEventHandler)
     : newButton.addEventListener("click", deleteEventHandler);
@@ -166,14 +171,17 @@ function initialize() {
 }
 
 // add feedback pop up messages
-function addFeedback() {
-  // appropriate messages
-  for (let i = 0; i < statusQueue.length; i++) {
-    statusQueue[i].style.display = "block";
-  }
+function addFeedback(key, toAdd, toRemove) {
+  result.classList.remove(toRemove);
+  result.classList.add(toAdd);
 
-  // clear message queue
-  statusQueue = [];
+  toAdd === "success"
+    ? result.setAttribute("aria-live", "polite")
+    : result.setAttribute("aria-live", "assertive");
+
+  // appropriate messages
+  result.style.display = "block";
+  result.innerHTML = status[key];
 
   // set timeout to remove pop ups
   clearStatusTO = setTimeout(removeFeedback, DELAY);
@@ -184,92 +192,54 @@ function removeFeedback() {
   // remove function call
   clearTimeout(clearStatusTO);
 
-  // clear message queue
-  statusQueue = [];
-
-  // for all children, display: none
-  for (let i = 0; i < feedback.children.length; i++) {
-    feedback.children[i].style.display = "none";
-  }
+  // set display: none
+  result.style.display = "none";
 }
 
-// check if item name is correct
-// - atleast one char other than white space
+/*
+ * check if item name is correct
+ * - atleast one char other than white space
+ */
 function validateName(name) {
-  name = name.trim();
-
-  if (name.length === 0) {
-    statusQueue.push(nameFailure);
-    addFeedback();
+  if (name.trim().length === 0) {
+    addFeedback("nameFailure", "failure", "success");
     return false;
   }
 
   return true;
 }
 
-// check if item quantity is correct
-// -  Integer between 1 to 100,000,000
+/*
+ * check if item quantity is correct
+ * -  Integer between 1 to 100,000,000
+ */
 function validateQuantity(quantity) {
+  // check if the quantity field is empty
   if (
     quantity.length === 0 ||
-    (quantity.length === 1 && (quantity[0] === "." || quantity[0] === "-"))
+    (quantity.length === 1 && !(quantity[0] >= "0" && quantity[0] <= "9"))
   ) {
-    statusQueue.push(emptyQuantityFailure);
-    addFeedback();
-    return false;
-  }
-
-  // remove leading zeros
-  quantity = quantity.replace(/^0+/, "");
-
-  // check if number is integer
-  let nonZero = false;
-  for (let i = quantity.length - 1; i >= 0; i--) {
-    nonZero |= quantity[i] >= "1" && quantity[i] <= "9";
-    if (quantity[i] === ".") {
-      if (i === 0) {
-        statusQueue.push(lowerRangeFailure);
-        addFeedback();
-        return false;
-      }
-      if (nonZero) {
-        statusQueue.push(positiveIntegerFailure);
-        addFeedback();
-        return false;
-      }
-      quantity = quantity.substr(0, i);
-      break;
-    }
-  }
-
-  // checks for negative number
-  for (let x in quantity) {
-    if ((quantity[x] < "0" || quantity[x] > "9") && quantity[x] !== ".") {
-      statusQueue.push(positiveIntegerFailure);
-      addFeedback();
-      return false;
-    }
-  }
-
-  // checks for larger number
-  if (quantity.length > 9) {
-    statusQueue.push(upperRangeFailure);
-    addFeedback();
+    addFeedback("emptyQuantityFailure", "failure", "success");
     return false;
   }
 
   quantity = Number(quantity);
 
-  // check if number satisfies range constraints
-  if (quantity < 1) {
-    statusQueue.push(lowerRangeFailure);
-    addFeedback();
+  // quantity is smaller than 1
+  if (quantity < LOWER) {
+    addFeedback("lowerRangeFailure", "failure", "success");
     return false;
   }
 
-  if (quantity > 100000000) {
-    statusQueue.push(upperRangeFailure);
-    addFeedback();
+  // quantity is larger than 10^9
+  if (quantity > UPPER) {
+    addFeedback("upperRangeFailure", "failure", "success");
+    return false;
+  }
+
+  // quantity is not integer
+  if (!Number.isInteger(quantity)) {
+    addFeedback("integerFailure", "failure", "success");
     return false;
   }
 
@@ -313,16 +283,15 @@ function submitEventHandler(event) {
   if (formSubmit.innerText === "Edit Item") {
     // item with the same name already exists, in case of edit
     if (itemName !== currentEdit && itemsInCart.has(itemName)) {
-      editFailure.innerText = `✘ Item with name "${itemName}" is already present in a Cart.`;
-      statusQueue.push(editFailure);
+      status.editFailure = `✘ Item with name <q>${itemName}</q> is already present in a Cart.`;
       updateForm("", "", "Add Item", 0);
-      addFeedback();
+      addFeedback("editFailure", "failure", "success");
       return;
     }
-    statusQueue.push(successEdit);
+    addFeedback("editSuccess", "success", "failure");
     Remove(currentEdit);
   } else {
-    statusQueue.push(successAdd);
+    addFeedback("addSuccess", "success", "failure");
   }
 
   if (itemsInCart.has(itemName)) {
@@ -333,7 +302,6 @@ function submitEventHandler(event) {
   Add(itemName, itemQuan);
 
   updateForm("", "", "Add Item", 0);
-  addFeedback();
 }
 
 // edit button
@@ -379,8 +347,7 @@ function deleteEventHandler(event) {
 
   Remove(itemName);
 
-  statusQueue.push(successDelete);
-  addFeedback();
+  addFeedback("deleteSuccess", "success", "failure");
 }
 
 // search item by name in a skip link
@@ -400,9 +367,8 @@ function searchEventHandler(event) {
 
   // item with given name is not present in a cart
   if (!itemsInCart.has(itemName)) {
-    notPresentFailure.innerText = `✘ Item with name ${itemName} is not present in a cart.`;
-    statusQueue.push(notPresentFailure);
-    addFeedback();
+    status.searchFailure = `✘ Item with name <q>${itemName}</q> is not present in a cart.`;
+    addFeedback("searchFailure", "failure", "success");
     searchInput.focus();
     return;
   }
