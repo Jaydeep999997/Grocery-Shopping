@@ -45,17 +45,6 @@ body {
   display: block;
 }
 
-.dialog h2,
-.dialog p {
-  border-bottom: var(--focusRing) solid white;
-}
-
-.dialog h2:focus,
-.dialog p:focus {
-  outline: none;
-  border-bottom: var(--focusRing) solid black;
-}
-
 .dialog_window {
   display: inline-block;
   position: fixed;
@@ -63,9 +52,14 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: white;
-  border: 0.25rem solid black;
+  border: var(--focusRing) solid white;
   padding: 2rem 4rem;
   z-index: 101;
+}
+
+.dialog_window:focus {
+  outline: none;
+  border: var(--focusRing) solid black;
 }
 
 .dialog_mask {

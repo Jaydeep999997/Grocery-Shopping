@@ -325,7 +325,7 @@ const checkCloseDialog = function (event) {
 };
 
 // open confirmation dialog box
-function openDialog() {
+const openDialog = function () {
   // store the currently active element
   lastActive = document.activeElement;
 
@@ -354,11 +354,11 @@ function openDialog() {
   disAgree.addEventListener("click", closeDialog);
 
   // focus on the first focusable child of dialog
-  dialog.querySelector(`[tabindex = "0"]`).focus();
-}
+  dialogWindow.focus();
+};
 
 // 'add item' button
-function submitEventHandler(event) {
+const submitEventHandler = function (event) {
   event.preventDefault();
 
   // remove all callbacks and messages
@@ -396,10 +396,10 @@ function submitEventHandler(event) {
   Add(itemName, itemQuan);
 
   updateForm("", "", "Add Item", 0);
-}
+};
 
 // edit button
-function editEventHandler(event) {
+const editEventHandler = function (event) {
   event.preventDefault();
 
   // remove all callbacks and messages
@@ -419,7 +419,7 @@ function editEventHandler(event) {
 
   document.getElementById("formContent").scrollIntoView(true);
   nameInput.focus();
-}
+};
 
 // delete button
 function deleteEventHandler(event) {
@@ -432,7 +432,7 @@ function deleteEventHandler(event) {
 }
 
 // search item by name in a skip link
-function searchEventHandler(event) {
+const searchEventHandler = function (event) {
   event.preventDefault();
 
   removeFeedback();
@@ -458,7 +458,7 @@ function searchEventHandler(event) {
   document
     .querySelector(`#${itemsInCart.get(itemName)["ID"]}`)
     .scrollIntoView(true);
-}
+};
 
 // check if there are no items in a cart
 checkEmpty();
