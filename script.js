@@ -422,14 +422,14 @@ const editEventHandler = function (event) {
 };
 
 // delete button
-function deleteEventHandler(event) {
+const deleteEventHandler = function (event) {
   event.preventDefault();
 
   let parent = this.parentNode;
   currentDelete = parent.querySelector("p").innerText;
 
   openDialog();
-}
+};
 
 // search item by name in a skip link
 const searchEventHandler = function (event) {
