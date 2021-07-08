@@ -12,8 +12,8 @@
   margin: 0px;
   padding: 0px;
   box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
-  font-weight: bold;
+  font-family: "Circular Std Book", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
   border-radius: var(--borderRadius);
 }
 
