@@ -165,7 +165,6 @@ body {
   width: auto;
   top: 0px;
   padding: 0.4em 0.6em;
-  font-weight: bold;
   font-size: var(--formFontSize);
   outline: none;
 }
