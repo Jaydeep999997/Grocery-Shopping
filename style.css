@@ -52,6 +52,7 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: white;
+  color: white;
   border: var(--focusRing) solid white;
   padding: 2rem 4rem;
   z-index: 101;
